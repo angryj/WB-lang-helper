@@ -1,6 +1,6 @@
 #pragma once
 
-#include <unordered_map>
+#include <map>
 #include <vector>
 #include <string>
 
@@ -13,7 +13,7 @@ struct order_states {
 };
 
 // default values
-std::unordered_map<std::string, std::vector<std::string>> main_dict = {
+std::map<std::string, std::vector<std::string>> main_dict = {
     {"C", {"p", "t", "k", "s", "m", "n"}}, // consonants, specifically stops
     {"V", {"a", "i", "u"}}, // vowels
     {"N", {"m", "n"}} // consonants, specifically nasals
