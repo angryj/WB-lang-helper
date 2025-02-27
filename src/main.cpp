@@ -54,13 +54,26 @@ int main() {
                 */
             }
             else if (states.parenthesis_open == true) {
-                 /*
-                 not implemented yet, but unlike for parenthesis, the phoneme classes within 
-                 brackets have a 50/50 chance to be included in the final root word
+                /*
+                 WIP, but unlike for brackets, the phoneme classes within 
+                 parenthesis have a 50/50 chance to be included in the final root word
                 */
+                rand() % 2 == 0 ? output_str += process_alpha_char(c) : output_str;
             }
             else if (isalpha(c)) {
                 output_str += process_alpha_char(c);
+            }
+            else if (c == '(') {
+                states.parenthesis_open = true;
+            }
+            else if (c == ')') {
+                states.parenthesis_open = false;
+            }
+            else if (c == '[') {
+                states.bracket_open = true;
+            }
+            else if (c == ']') {
+                states.bracket_open = false;
             }
         }
         std::cout << output_str << "\n";
