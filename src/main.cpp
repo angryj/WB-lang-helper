@@ -15,7 +15,7 @@ Iter select_randomly(Iter start, Iter end, RandomGenerator& g) {
 template<typename Iter>
 Iter select_randomly(Iter start, Iter end) {
     static std::random_device rd;
-    static std::mt19937 gen(rd());
+    static std::minstd_rand gen(get_global_random_device()());
     return select_randomly(start, end, gen);
 }
 
@@ -23,16 +23,11 @@ std::string process_alpha_char(char c) {
     std::string output = "";
     if (isupper(c)) {
         std::string lookup_str(1, c);
-        try {
-            if (main_dict.count(lookup_str) == 0) {
-                throw std::out_of_range("Key not found in main_dict");
-            } 
-            std::vector<std::string>::iterator begin_iter = main_dict[lookup_str].begin();
-            std::vector<std::string>::iterator end_iter = main_dict[lookup_str].end();
-            output += *select_randomly(begin_iter, end_iter);
-        } catch (const std::out_of_range& error) {
-            std::cerr << "Error: " << error.what() << " for key: " << lookup_str << std::endl;
-            return "";
+        auto it = main_dict.find(lookup_str);
+        if (it != main_dict.end()) {
+            output += *select_randomly(it->second.begin(), it->second.end());
+        } else {
+            std::cerr << "Error: Key not found in main_dict: " << lookup_str << std::endl;
         }
     }
     else if (islower(c)) {
@@ -58,7 +53,11 @@ int main() {
                  WIP, but unlike for brackets, the phoneme classes within 
                  parenthesis have a 50/50 chance to be included in the final root word
                 */
-                rand() % 2 == 0 ? output_str += process_alpha_char(c) : output_str;
+                std::minstd_rand gen(get_global_random_device()());
+                std::uniform_int_distribution<int> dist(0, 1);
+                if (dist(gen) == 1) {
+                    output_str += process_alpha_char(c);
+                }
             }
             else if (isalpha(c)) {
                 output_str += process_alpha_char(c);
