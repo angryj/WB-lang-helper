@@ -7,8 +7,9 @@
 
 template<typename Iter, typename RandomGenerator>
 Iter select_randomly(Iter start, Iter end, RandomGenerator& g) {
-    std::uniform_int_distribution<> dis(0, std::distance(start, end) - 1);
-    std::advance(start, dis(g));
+    using diff_t = typename std::iterator_traits<Iter>::difference_type;
+    std::uniform_int_distribution<diff_t> dist(0, std::distance(start, end) - 1);
+    std::advance(start, dist(g));
     return start;
 }
 template<typename Iter>
@@ -33,7 +34,7 @@ std::string process_alpha_char(char c) {
             std::cerr << "Error: " << error.what() << " for key: " << lookup_str << std::endl;
             return "";
         }
-    } 
+    }
     else if (islower(c)) {
         output.push_back(c);
     }
