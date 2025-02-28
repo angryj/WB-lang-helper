@@ -36,43 +36,44 @@ std::string process_alpha_char(char c) {
     return output;
 }
 
+std::string process_string(const std::string& input) {
+    std::string output_str;
+    for (char c : input) {
+        output_str += process_alpha_char(c);
+    }
+    return output_str;
+}
+
 int main() {
     order_states states;
     for (int i = 0; i < WORDS_AMOUNT; i++) {
         std::string output_str;
+        std::minstd_rand gen(get_global_random_device()());
+        std::uniform_int_distribution<int> dist(0, 1);
+        std::string local_selection;
+        
         for (char c : order) {
-            std::vector<std::string> local_selection;
-            if (states.bracket_open == true) {
-                /*
-                 not implemented yet, but unlike for parenthesis, the phoneme classes within 
-                 brackets HAVE to be included in the final root word
-                */
-            }
-            else if (states.parenthesis_open == true) {
-                /*
-                 WIP, but unlike for brackets, the phoneme classes within 
-                 parenthesis have a 50/50 chance to be included in the final root word
-                */
-                std::minstd_rand gen(get_global_random_device()());
-                std::uniform_int_distribution<int> dist(0, 1);
-                if (dist(gen) == 1) {
-                    output_str += process_alpha_char(c);
-                }
-            }
-            else if (isalpha(c)) {
-                output_str += process_alpha_char(c);
-            }
-            else if (c == '(') {
+            if (c == '(') {
                 states.parenthesis_open = true;
-            }
-            else if (c == ')') {
-                states.parenthesis_open = false;
             }
             else if (c == '[') {
                 states.bracket_open = true;
             }
+            else if (c == ')') {
+                states.parenthesis_open = false;                
+                if (dist(gen) == 1) {
+                    output_str += process_string(local_selection);
+                }
+                local_selection.clear();
+            }
             else if (c == ']') {
                 states.bracket_open = false;
+            } 
+            else if (states.parenthesis_open || states.bracket_open) {
+                local_selection.push_back(c);
+            }
+            else if (isalpha(c)) {
+                output_str += process_alpha_char(c);
             }
         }
         std::cout << output_str << "\n";
