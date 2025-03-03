@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <vector>
 #include <string>
+#include <random>
 
 #define WORDS_AMOUNT 100
 #define FILTER_DUPLICATES
@@ -20,3 +21,8 @@ std::unordered_map<std::string, std::vector<std::string>> main_dict = {
 };
 
 std::string order = "CV(CV)(N)"; // default value
+
+inline std::random_device& get_global_random_device() {
+    static std::random_device rd;
+    return rd;
+}
